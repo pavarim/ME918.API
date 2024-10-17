@@ -19,7 +19,10 @@ library(jsonlite)
 #                  ID = seq(1, length(x)))
 # readr::write_csv(df, file = "dados_regressao.csv")
 df <- read.csv("dados_regressao.csv")
+modelo <- lm(y ~ x + as.factor(grupo), data = df)
 
+
+# Parte 2
 #* Adiciona uma nova observação
 #* @param x Variável numérica
 #* @param grupo Variável categórica
@@ -32,15 +35,17 @@ function(x, grupo, y) {
   df <<- rbind(df, nova_pessoa)
 }
 
+# Parte 2 - Eletiva
 #* Remove observações pelo ID
 #* @param ID Identificador da linha
 #* @delete /delete_row
 function(ID) {
-  df <<- df[-as.numeric(ID), ]
+  df <<- df[-as.numeric(ID),]
   readr::write_csv(df, "dados_regressao.csv")
 }
 
-#* Modifica uma determinada observação
+# Parte 2 - Eletiva
+#* Modifica uma observação pelo ID
 #* @param ID Identificador da linha
 #* @param x Variável numérica
 #* @param grupo Variável categórica
@@ -52,6 +57,7 @@ function(ID, x, y, grupo) {
   readr::write_csv(df, "dados_regressao.csv")
 }
 
+# Parte 3
 #* Gera um gráfico de dispersão com a reta de regressão ajustada por categoria
 #* @serializer png
 #* @get /plot_lm
@@ -65,6 +71,7 @@ function() {
   print(grafico) 
 }
 
+# Parte 3
 #* Fornece as estimativas dos betas e da variância
 #* @serializer json
 #* @get /stats
@@ -80,6 +87,7 @@ function() {
   return(toJSON(resultado, pretty = TRUE))
 }
 
+# Parte 3 - Eletiva
 #* Retorna todos os resíduos do modelo de regressão ajustado
 #* @serializer json
 #* @get /residuals
@@ -88,6 +96,7 @@ function() {
   return(toJSON(modelo$residuals, pretty = TRUE))
 }
 
+# Parte 3 - Eletiva
 #* Gera um gráfico dos resíduos do modelo de regressão ajustado
 #* @serializer png
 #* @get /plot_residuals
@@ -101,6 +110,7 @@ function() {
   print(grafico) 
 }
 
+# Parte 3 - Eletiva
 #* Retorna informações sobre a significância estatística dos parâmetros
 #* @serializer json
 #* @get /stats_p-values
@@ -112,5 +122,17 @@ function() {
     beta2 = summary(modelo)$coefficients[3, "Pr(>|t|)"],          
     beta3 = summary(modelo)$coefficients[4, "Pr(>|t|)"]
   )
-  return(toJSON(resultado, pretty = TRUE))
+  return(resultado)
+}
+
+# Parte 4
+#* Predição para novas observações
+#* @param x Variável numérica
+#* @param grupo Variável categórica
+#* @serializer json
+#* @get /pred
+function(x, grupo) {
+  newdata <- data.frame(x=as.numeric(x), grupo)
+  pred <- predict(modelo, newdata)
+  return(pred)
 }
