@@ -1,3 +1,4 @@
+# packages
 library(plumber)
 library(ggplot2)
 library(dplyr)
@@ -6,17 +7,17 @@ library(jsonlite)
 
 #* @apiTitle API Regressão Linear
 # Variável global
-#ra <- 185416 #Insira o RA de um dos membros do grupo aqui
-  #set.seed(ra)
-#b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
-#bB <- 2; bC <- 3
-#n <- 25
-#x <- rpois(n, lambda = 4) + runif(n, -3, 3)
-#grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
-#y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
-#df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
-                 #ID = seq(1, length(x)))
-#readr::write_csv(df, file = "dados_regressao.csv")
+# ra <- 185416
+# set.seed(ra)
+# b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+# bB <- 2; bC <- 3
+# n <- 25
+# x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+# grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+# y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+# df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(), 
+#                  ID = seq(1, length(x)))
+# readr::write_csv(df, file = "dados_regressao.csv")
 df <- read.csv("dados_regressao.csv")
 
 #* Adiciona uma nova observação
@@ -24,28 +25,28 @@ df <- read.csv("dados_regressao.csv")
 #* @param grupo Variável categórica
 #* @param y Variável resposta
 #* @post /add_row
-function(x, grupo, y){
-nova_pessoa <- data.frame(x = as.numeric(x), grupo = grupo, y = as.numeric(y), 
-              momento_registro = lubridate::now(), ID = max(df$ID)+1)
+function(x, grupo, y) {
+  nova_pessoa <- data.frame(x = as.numeric(x), grupo = grupo, y = as.numeric(y),
+                            momento_registro = lubridate::now(), ID = max(df$ID) + 1)
   readr::write_csv(nova_pessoa, "dados_regressao.csv", append = TRUE)
   df <<- rbind(df, nova_pessoa)
 }
 
-#* Remove uma determinada observação
-#* @param ID Identidade
-#* @delete  /delete_row
-function(ID){
+#* Remove observações pelo ID
+#* @param ID Identificador da linha
+#* @delete /delete_row
+function(ID) {
   df <<- df[-as.numeric(ID), ]
   readr::write_csv(df, "dados_regressao.csv")
 }
 
 #* Modifica uma determinada observação
-#* @param ID The message to echo
+#* @param ID Identificador da linha
 #* @param x Variável numérica
 #* @param grupo Variável categórica
 #* @param y Variável resposta
-#* @put  /change_row
-function(ID, x, y, grupo){
+#* @put /change_row
+function(ID, x, y, grupo) {
   df[as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
   y = as.numeric(y), momento_registro = lubridate::now(), ID = as.numeric(ID))
   readr::write_csv(df, "dados_regressao.csv")
@@ -54,7 +55,7 @@ function(ID, x, y, grupo){
 #* Gera um gráfico de dispersão com a reta de regressão ajustada por categoria
 #* @serializer png
 #* @get /plot_lm
-function(){
+function() {
   grafico <- df %>% ggplot(aes(x = x, y = y, col = grupo)) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
@@ -67,7 +68,7 @@ function(){
 #* Fornece as estimativas dos betas e da variância
 #* @serializer json
 #* @get /stats
-function(){
+function() {
   modelo <- lm(y ~ x + as.factor(grupo), data = df)
   resultado <- list(
     beta0 = modelo$coefficients[1],       
@@ -82,7 +83,7 @@ function(){
 #* Retorna todos os resíduos do modelo de regressão ajustado
 #* @serializer json
 #* @get /residuals
-function(){
+function() {
   modelo <- lm(y ~ x + as.factor(grupo), data = df)
   return(toJSON(modelo$residuals, pretty = TRUE))
 }
@@ -90,7 +91,7 @@ function(){
 #* Gera um gráfico dos resíduos do modelo de regressão ajustado
 #* @serializer png
 #* @get /plot_residuals
-function(){
+function() {
   modelo <- lm(y ~ x + as.factor(grupo), data = df)
   grafico <- df %>% ggplot(aes(sample = modelo$residuals)) +
     geom_qq() +
@@ -103,7 +104,7 @@ function(){
 #* Retorna informações sobre a significância estatística dos parâmetros
 #* @serializer json
 #* @get /stats_p-values
-function(){
+function() {
   modelo <- lm(y ~ x + as.factor(grupo), data = df)
   resultado <- list(
     beta0 = summary(modelo)$coefficients[1, "Pr(>|t|)"],       
