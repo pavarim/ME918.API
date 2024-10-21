@@ -136,3 +136,5 @@ function(x, grupo) {
   pred <- predict(modelo, newdata)
   return(pred)
 }
+
+#
