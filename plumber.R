@@ -10,17 +10,17 @@ library(usethis)
 #* @apiTitle API Regressão Linear
 
 # Variável global
-ra <- 185416
-set.seed(ra)
-b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
-bB <- 2; bC <- 3
-n <- 25
-x <- rpois(n, lambda = 4) + runif(n, -3, 3)
-grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
-y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
-df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
-                 ID = seq(1, length(x)))
-readr::write_csv(df, file = "dados/dados_regressao.csv")
+# ra <- 185416
+# set.seed(ra)
+# b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+# bB <- 2; bC <- 3
+# n <- 25
+# x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+# grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+# y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+# df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
+#                  ID = seq(1, length(x)))
+# readr::write_csv(df, file = "dados/dados_regressao.csv")
 
 df <- read.csv("dados/dados_regressao.csv")
 modelo <- lm(y ~ x + as.factor(grupo), data = df)
