@@ -2,17 +2,38 @@
 output: github_document
 ---
 
+```{r, echo = FALSE, message = FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggfocus)
+library(jsonlite)
+```
+
+
+```{r, echo = FALSE}
+# Banco simulado para manipulação
+ra <- 123
+set.seed(ra)
+b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+bB <- 2; bC <- 3
+n <- 6
+x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+db <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
+                 ID = seq(1, length(x)))
+```
 # API_Regressao_Linear
 ## Introdução
 `API_Regressao_Linear` permite, desde a interatividade do banco de dados à sua escolha, por meio de manipulações que realizam a adição, modificação e remoção de observações, até a utilização de regressão linear, que traz tanto as estimativas dos parâmetros quanto suas significâncias, além de predições para novos dados e gráficos de dispersão relacionados à reta de regressão ajustada e dos resíduos.
 
-Ela foi criada e desenvolvida a partir do pacote `plumber` do R, que, através da especificação `Swagger`, define uma estrutura de API, facilitando a implementação e a verificação por meio de testes para validar o comportamento da mesma. 
+Ela foi criada e desenvolvida a partir do pacote `plumber` do R, que, através da especificação `Swagger`, define uma estrutura de API a partir de rotas, facilitando a implementação e a verificação por meio de testes para validar o comportamento da mesmas. 
 
-# Uso
-Para exemplificação, considere as seis primeiras observações de um banco de dados simulado:
+## Uso
+Para exemplificação, considere o seguinte banco de dados simulado com cinco observações:
 
-```{r, echo=FALSE}
-read.csv("dados/dados_regressao.csv")[1:6,]
+```{r, echo = FALSE}
+db[1:5,]
 ```
 onde
 
@@ -31,8 +52,148 @@ onde
 - `grupo`
 - `y`
 
-`/data/delete_row`
+Para exemplificar, considere a seguinte requisição `x = 10, grupo = A, y = 15`.
+
+```{r, echo = FALSE}
+db
+```
+
+
+`/data/delete_row`: Rota que exclui observações de três maneiras diferentes, recebendo como argumento o `ID`. A primeira forma é feita excluindo uma única observação. Suponha que deseja-se excluir o `ID = 1`.
+
+```{r, echo = FALSE}
+db[-1,]
+```
+
+Em certos casos, é preferível excluir uma sequência de observações, por meio da sequência `1:3`.
+
+```{r, echo = FALSE}
+db[-c(1,2,3),]
+
+```
+
+Por fim, a terceira maneira é utilizando vetores como `2, 4, 6`.
+
+```{r, echo = FALSE}
+db[-c(2,4,6),]
+```
+
+
+`/data/change_row`: Rota que modifica uma única observação por requisição. Para isso, é necessário especificar os argumentos:
+
+- `ID`
+- `x`
+- `y`
+- `grupo`
+
+Se o interesse é alterar a observação de `ID = 6` para `x = 5, y = 10, grupo = C`.
+
+```{r, echo = FALSE}
+db[6,] <- data.frame(x = 5, grupo = "C", y = 10, momento_registro = lubridate::now(),
+ID = 6)
+db
+```
 
 ### Inferência
+```{r, echo = FALSE}
+# Banco simulado para regressão
+ra <- 1234
+set.seed(ra)
+b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+bB <- 2; bC <- 3
+n <- 25
+x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+db_grafico <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
+                 ID = seq(1, length(x)))
+modelo_simulado <- lm(y ~ x + as.factor(grupo), data = db_grafico)
+
+```
+`/fit/param`: Rota que fornece as estimativas dos parâmetros da regressão.
+
+```{r, echo = FALSE}
+resultados <- list(
+    beta_0 = modelo_simulado$coefficients[1],
+    beta_1 = modelo_simulado$coefficients[2],
+    beta_2 = modelo_simulado$coefficients[3],
+    beta_3 = modelo_simulado$coefficients[4],
+    QME = anova(modelo_simulado)[3, 3]
+)
+
+toJSON(resultados, pretty = TRUE)
+
+```
+
+`/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros.
+
+```{r, echo = FALSE}
+toJSON(head(modelo_simulado$residuals))
+```
+
+
+`/fit/p_values`: Rota que informa sobre a significância estatística dos parâmetros
+
+```{r, echo = FALSE}
+resultado <- list(
+    beta0 = summary(modelo_simulado)$coefficients[1, "Pr(>|t|)"],       
+    beta1 = summary(modelo_simulado)$coefficients[2, "Pr(>|t|)"],          
+    beta2 = summary(modelo_simulado)$coefficients[3, "Pr(>|t|)"],          
+    beta3 = summary(modelo_simulado)$coefficients[4, "Pr(>|t|)"]
+  )
+toJSON(resultados, pretty = TRUE)
+```
+
+`/fit/pred`: Rota que realiza predições para novas observações. Especificando na requisição `x = 10` e `grupo = B`. 
+
+```{r, echo = FALSE}
+toJSON(predict(modelo_simulado, data.frame(x = 20, grupo = "B")))
+
+```
+Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`.
+
+```{r, echo = FALSE}
+toJSON(predict(modelo_simulado, data.frame(x = c(20, 10), grupo = c("B", "A"))))
+```
+
 
 ### Gráficos
+
+Considere que foi necessário adicionar mais observações para a ilustração da regressão nos gráficos. 
+
+`/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente com a reta de regressão ajustada. Há um argumento opcional `focus` que destaca o grupo desejado. Caso não seja passado nenhum argumento, a saída é
+
+```{r, echo = FALSE, warning = FALSE, message=FALSE}
+
+db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme_bw() +
+    labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
+         x = colnames(df)[1], y = colnames(df)[3])
+```
+
+Supondo que queremos focar no grupo `A`.
+
+```{r, echo = FALSE, warning = FALSE, message=FALSE}
+db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grupo)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    theme_bw() +
+    labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
+         x = colnames(df)[1], y = colnames(df)[3]) +
+      scale_alpha_focus("A") +
+      scale_color_focus("A")
+
+```
+
+`/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos da regressão.
+
+```{r, echo = FALSE}
+ db_grafico %>% ggplot(aes(sample = modelo_simulado$residuals)) +
+    geom_qq() +
+    theme_bw() +
+    labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
+         x = "Observação", y ="Resíduos")
+```
+

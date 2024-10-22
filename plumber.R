@@ -10,17 +10,17 @@ library(usethis)
 #* @apiTitle API Regressão Linear
 
 # Variável global
-# ra <- 185416
-# set.seed(ra)
-# b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
-# bB <- 2; bC <- 3
-# n <- 25
-# x <- rpois(n, lambda = 4) + runif(n, -3, 3)
-# grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
-# y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
-# df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
-#                  ID = seq(1, length(x)))
-# readr::write_csv(df, file = "dados/dados_regressao.csv")
+#ra <- 185416
+#set.seed(ra)
+#b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+#bB <- 2; bC <- 3
+#n <- 25
+#x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+#grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+#y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+#df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
+ #                ID = seq(1, length(x)))
+#readr::write_csv(df, file = "dados/dados_regressao.csv")
 
 df <- read.csv("dados/dados_regressao.csv")
 modelo <- lm(y ~ x + as.factor(grupo), data = df)
@@ -37,7 +37,7 @@ function(x, grupo, y) {
                             momento_registro = lubridate::now(), ID = max(df$ID) + 1)
   readr::write_csv(nova_pessoa, "dados/dados_regressao.csv", append = TRUE)
   df <<- rbind(df, nova_pessoa)
-  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 
 # Parte 2 - Eletiva
@@ -55,7 +55,7 @@ function(ID) {
   }
   df <<- df[!(df$ID %in% ID),]
   readr::write_csv(df, "dados/dados_regressao.csv")
-  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 # Remove sequências do tipo 1,2,3 quanto vetores em R 1:3.
 
@@ -72,7 +72,7 @@ function(ID, x, y, grupo) {
   df[as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
   y = as.numeric(y), momento_registro = lubridate::now(), ID = as.numeric(ID))
   readr::write_csv(df, "dados/dados_regressao.csv")
-  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 
 
