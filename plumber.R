@@ -5,6 +5,7 @@ library(dplyr)
 library(farver)
 library(jsonlite)
 library(ggfocus)
+library(usethis)
 
 #* @apiTitle API Regressão Linear
 
@@ -20,12 +21,13 @@ y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
 df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
                  ID = seq(1, length(x)))
 readr::write_csv(df, file = "dados/dados_regressao.csv")
+
 df <- read.csv("dados/dados_regressao.csv")
 modelo <- lm(y ~ x + as.factor(grupo), data = df)
 
-
 # Parte 2
 #* Adiciona uma nova observação
+#* @tag Dados
 #* @param x Variável numérica
 #* @param grupo Variável categórica
 #* @param y Variável resposta
@@ -35,10 +37,12 @@ function(x, grupo, y) {
                             momento_registro = lubridate::now(), ID = max(df$ID) + 1)
   readr::write_csv(nova_pessoa, "dados/dados_regressao.csv", append = TRUE)
   df <<- rbind(df, nova_pessoa)
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 
 # Parte 2 - Eletiva
 #* Remove observações pelo ID
+#* @tag Dados
 #* @param ID Identificador da linha
 #* @delete /data/delete_row
 function(ID) {
@@ -51,12 +55,14 @@ function(ID) {
   }
   df <<- df[!(df$ID %in% ID),]
   readr::write_csv(df, "dados/dados_regressao.csv")
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 # Remove sequências do tipo 1,2,3 quanto vetores em R 1:3.
 
 
 # Parte 2 - Eletiva
 #* Modifica uma observação pelo ID
+#* @tag Dados
 #* @param ID Identificador da linha
 #* @param x Variável numérica
 #* @param grupo Variável categórica
@@ -66,11 +72,13 @@ function(ID, x, y, grupo) {
   df[as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
   y = as.numeric(y), momento_registro = lubridate::now(), ID = as.numeric(ID))
   readr::write_csv(df, "dados/dados_regressao.csv")
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
 }
 
 
 # Parte 3
 #* Gera um gráfico de dispersão com a reta de regressão ajustada por categoria
+#* @tag Gráficos
 #* @serializer png
 #* @get /plot/lm
 function(focus = NULL) {
@@ -92,10 +100,10 @@ function(focus = NULL) {
 
 # Parte 3
 #* Fornece as estimativas dos betas e da variância
+#* @tag Inferências
 #* @serializer json
 #* @get /fit/param
 function() {
-  modelo <- lm(y ~ x + as.factor(grupo), data = df)
   resultado <- list(
     beta0 = modelo$coefficients[1],       
     beta1 = modelo$coefficients[2],          
@@ -109,20 +117,20 @@ function() {
 
 # Parte 3 - Eletiva
 #* Retorna todos os resíduos do modelo de regressão ajustado
+#* @tag Inferências
 #* @serializer json
 #* @get /fit/residuals
 function() {
-  modelo <- lm(y ~ x + as.factor(grupo), data = df)
   return(modelo$residuals)
 }
 
 
 # Parte 3 - Eletiva
 #* Gera um gráfico dos resíduos do modelo de regressão ajustado
+#* @tag Gráficos
 #* @serializer png
 #* @get /plot/residuals
 function() {
-  modelo <- lm(y ~ x + as.factor(grupo), data = df)
   grafico <- df %>% ggplot(aes(sample = modelo$residuals)) +
     geom_qq() +
     theme_bw() +
@@ -131,12 +139,13 @@ function() {
   print(grafico) 
 }
 
+
 # Parte 3 - Eletiva
 #* Retorna informações sobre a significância estatística dos parâmetros
+#* @tag Inferências
 #* @serializer json
 #* @get /fit/p_values
 function() {
-  modelo <- lm(y ~ x + as.factor(grupo), data = df)
   resultado <- list(
     beta0 = summary(modelo)$coefficients[1, "Pr(>|t|)"],       
     beta1 = summary(modelo)$coefficients[2, "Pr(>|t|)"],          
@@ -149,6 +158,7 @@ function() {
 
 # Parte 4
 #* Predição para novas observações
+#* @tag Inferências
 #* @param x Variável numérica
 #* @param grupo Variável categórica
 #* @serializer json

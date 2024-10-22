@@ -1,0 +1,38 @@
+---
+output: github_document
+---
+
+# API_Regressao_Linear
+## Introdução
+`API_Regressao_Linear` permite, desde a interatividade do banco de dados à sua escolha, por meio de manipulações que realizam a adição, modificação e remoção de observações, até a utilização de regressão linear, que traz tanto as estimativas dos parâmetros quanto suas significâncias, além de predições para novos dados e gráficos de dispersão relacionados à reta de regressão ajustada e dos resíduos.
+
+Ela foi criada e desenvolvida a partir do pacote `plumber` do R, que, através da especificação `Swagger`, define uma estrutura de API, facilitando a implementação e a verificação por meio de testes para validar o comportamento da mesma. 
+
+# Uso
+Para exemplificação, considere as seis primeiras observações de um banco de dados simulado:
+
+```{r, echo=FALSE}
+read.csv("dados/dados_regressao.csv")[1:6,]
+```
+onde
+
+- `x`: variável preditora de natureza númerica.
+- `grupo`:variável preditora categórica. 
+- `y`:variável resposta.
+- `momento_registro`: horário em que a observação foi gerada.
+- `ID`: identificador responsável pela exclusividade da observação.
+
+## Rotas
+
+### Dados
+`/data/add_row`: Rota responsável por adicionar uma nova observação por requisição, recebendo os seguintes argumentos:
+
+- `x`
+- `grupo`
+- `y`
+
+`/data/delete_row`
+
+### Inferência
+
+### Gráficos
