@@ -33,9 +33,9 @@ como parte das atividades realizadas na disciplina de ME918-2S-2024
 
 ## Introdução
 `API_Regressao_Linear` é uma interface que permite ao usuário interagir com um 
-banco de dados à sua escolha, por meio de manipulações de adição,
+banco de dados, por meio de manipulações de adição,
 modificação e remoção de observações. Também possibilita ao usuário a 
-utilização de um modelo de regressão linear, que traz as estimativas dos 
+utilização de um modelo de regressão linear que traz as estimativas dos 
 parâmetros do modelo, suas significâncias estatísticas, predições para novos dados e 
 gráficos de dispersão relacionados tanto à reta de regressão ajustada, 
 quanto aos resíduos.
@@ -71,6 +71,8 @@ onde
 Para exemplificar, considere a seguinte requisição `x = 10, grupo = A, y = 15`.
 
 ```{r, echo = FALSE}
+db[6,] <- data.frame(x = 5, grupo = "A", y = 10, momento_registro = lubridate::now(),
+ID = 6)
 db
 ```
 

@@ -9,12 +9,12 @@ Dados) do curso de Estatística da UNICAMP.
 ## Introdução
 
 `API_Regressao_Linear` é uma interface que permite ao usuário interagir
-com um banco de dados à sua escolha, por meio de manipulações de adição,
-modificação e remoção de observações. Também possibilita ao usuário a
-utilização de um modelo de regressão linear, que traz as estimativas dos
-parâmetros do modelo, suas significâncias estatísticas, predições para
-novos dados e gráficos de dispersão relacionados tanto à reta de
-regressão ajustada, quanto aos resíduos.
+com um banco de dados, por meio de manipulações de adição, modificação e
+remoção de observações. Também possibilita ao usuário a utilização de um
+modelo de regressão linear que traz as estimativas dos parâmetros do
+modelo, suas significâncias estatísticas, predições para novos dados e
+gráficos de dispersão relacionados tanto à reta de regressão ajustada,
+quanto aos resíduos.
 
 Ela foi criada e desenvolvida a partir do pacote `plumber` do R que, por
 meio da especificação `Swagger`, define uma estrutura de API a partir de
@@ -27,11 +27,11 @@ Para exemplificação, considere o seguinte banco de dados simulado com
 cinco observações:
 
     ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 22:41:17  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 22:41:17  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 22:41:17  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 22:41:17  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 22:41:17  5
+    ## 1 3.3086101     B  5.973492 2024-10-22 23:25:11  1
+    ## 2 5.7396884     C 13.826110 2024-10-22 23:25:11  2
+    ## 3 9.7410001     A 11.482025 2024-10-22 23:25:11  3
+    ## 4 0.7200049     C  3.457060 2024-10-22 23:25:11  4
+    ## 5 5.0654238     C  5.894075 2024-10-22 23:25:11  5
 
 onde
 
@@ -56,12 +56,12 @@ Para exemplificar, considere a seguinte requisição
 `x = 10, grupo = A, y = 15`.
 
     ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 22:41:17  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 22:41:17  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 22:41:17  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 22:41:17  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 22:41:17  5
-    ## 6 7.4358004     A 10.314954 2024-10-22 22:41:17  6
+    ## 1 3.3086101     B  5.973492 2024-10-22 23:25:11  1
+    ## 2 5.7396884     C 13.826110 2024-10-22 23:25:11  2
+    ## 3 9.7410001     A 11.482025 2024-10-22 23:25:11  3
+    ## 4 0.7200049     C  3.457060 2024-10-22 23:25:11  4
+    ## 5 5.0654238     C  5.894075 2024-10-22 23:25:11  5
+    ## 6 5.0000000     A 10.000000 2024-10-22 23:25:11  6
 
 `/data/delete_row`: Rota que exclui observações de três maneiras
 diferentes, recebendo como argumento o `ID`. A primeira forma é feita
@@ -69,26 +69,26 @@ excluindo uma única observação. Suponha que deseja-se excluir o
 `ID = 1`.
 
     ##           x grupo         y    momento_registro ID
-    ## 2 5.7396884     C 13.826110 2024-10-22 22:41:17  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 22:41:17  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 22:41:17  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 22:41:17  5
-    ## 6 7.4358004     A 10.314954 2024-10-22 22:41:17  6
+    ## 2 5.7396884     C 13.826110 2024-10-22 23:25:11  2
+    ## 3 9.7410001     A 11.482025 2024-10-22 23:25:11  3
+    ## 4 0.7200049     C  3.457060 2024-10-22 23:25:11  4
+    ## 5 5.0654238     C  5.894075 2024-10-22 23:25:11  5
+    ## 6 5.0000000     A 10.000000 2024-10-22 23:25:11  6
 
 Em certos casos, é preferível excluir uma sequência de observações, por
 meio da sequência `1:3`.
 
     ##           x grupo         y    momento_registro ID
-    ## 4 0.7200049     C  3.457060 2024-10-22 22:41:17  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 22:41:17  5
-    ## 6 7.4358004     A 10.314954 2024-10-22 22:41:17  6
+    ## 4 0.7200049     C  3.457060 2024-10-22 23:25:11  4
+    ## 5 5.0654238     C  5.894075 2024-10-22 23:25:11  5
+    ## 6 5.0000000     A 10.000000 2024-10-22 23:25:11  6
 
 Por fim, a terceira maneira é utilizando vetores como `2, 4, 6`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 3.308610     B  5.973492 2024-10-22 22:41:17  1
-    ## 3 9.741000     A 11.482025 2024-10-22 22:41:17  3
-    ## 5 5.065424     C  5.894075 2024-10-22 22:41:17  5
+    ## 1 3.308610     B  5.973492 2024-10-22 23:25:11  1
+    ## 3 9.741000     A 11.482025 2024-10-22 23:25:11  3
+    ## 5 5.065424     C  5.894075 2024-10-22 23:25:11  5
 
 `/data/change_row`: Rota que modifica uma única observação por
 requisição. Para isso, é necessário especificar os argumentos:
@@ -102,12 +102,12 @@ Se o interesse é alterar a observação de `ID = 6` para `x = 5`,
 `y = 10`, `grupo = C`.
 
     ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 22:41:17  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 22:41:17  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 22:41:17  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 22:41:17  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 22:41:17  5
-    ## 6 5.0000000     C 10.000000 2024-10-22 22:41:17  6
+    ## 1 3.3086101     B  5.973492 2024-10-22 23:25:11  1
+    ## 2 5.7396884     C 13.826110 2024-10-22 23:25:11  2
+    ## 3 9.7410001     A 11.482025 2024-10-22 23:25:11  3
+    ## 4 0.7200049     C  3.457060 2024-10-22 23:25:11  4
+    ## 5 5.0654238     C  5.894075 2024-10-22 23:25:11  5
+    ## 6 5.0000000     C 10.000000 2024-10-22 23:25:11  6
 
 ### Inferência
 
