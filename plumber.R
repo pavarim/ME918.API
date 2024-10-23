@@ -2,28 +2,28 @@
 library(plumber)
 library(ggplot2)
 library(dplyr)
-library(farver)
+library(farver)  # necessario para funcionar comptuadores do lab
 library(jsonlite)
 library(ggfocus)
-library(usethis)
 
 #* @apiTitle API Regressão Linear
 
 # Variável global
-#ra <- 185416
-#set.seed(ra)
-#b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
-#bB <- 2; bC <- 3
-#n <- 25
-#x <- rpois(n, lambda = 4) + runif(n, -3, 3)
-#grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
-#y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
-#df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
- #                ID = seq(1, length(x)))
-#readr::write_csv(df, file = "dados/dados_regressao.csv")
+# ra <- 185416
+# set.seed(ra)
+# b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
+# bB <- 2; bC <- 3
+# n <- 25
+# x <- rpois(n, lambda = 4) + runif(n, -3, 3)
+# grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
+# y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
+# df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
+#                  ID = seq(1, length(x)))
+# readr::write_csv(df, file = "dados/dados_regressao.csv")
 
-df <- read.csv("dados/dados_regressao.csv")
-modelo <- lm(y ~ x + as.factor(grupo), data = df)
+df <- read.csv("dados/dados_regressao.csv")  # Recuperando dados anteriores
+modelo <- lm(y ~ x + as.factor(grupo), data = df)  # Ajustando modelo
+
 
 # Parte 2
 #* Adiciona uma nova observação
@@ -37,8 +37,10 @@ function(x, grupo, y) {
                             momento_registro = lubridate::now(), ID = max(df$ID) + 1)
   readr::write_csv(nova_pessoa, "dados/dados_regressao.csv", append = TRUE)
   df <<- rbind(df, nova_pessoa)
-  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  return(df)
 }
+
 
 # Parte 2 - Eletiva
 #* Remove observações pelo ID
@@ -55,9 +57,9 @@ function(ID) {
   }
   df <<- df[!(df$ID %in% ID),]
   readr::write_csv(df, "dados/dados_regressao.csv")
-  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  return(df)
 }
-# Remove sequências do tipo 1,2,3 quanto vetores em R 1:3.
 
 
 # Parte 2 - Eletiva
@@ -69,10 +71,11 @@ function(ID) {
 #* @param y Variável resposta
 #* @put /data/change_row
 function(ID, x, y, grupo) {
-  df[as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
+  df[df$ID == as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
   y = as.numeric(y), momento_registro = lubridate::now(), ID = as.numeric(ID))
   readr::write_csv(df, "dados/dados_regressao.csv")
-  #modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  modelo <<- lm(y ~ x + as.factor(grupo), data = df)
+  return(df)
 }
 
 
@@ -83,13 +86,13 @@ function(ID, x, y, grupo) {
 #* @get /plot/lm
 function(focus = NULL) {
   grafico <- df %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grupo)) +
-    geom_point() +
+    geom_point(alpha=1) +
     geom_smooth(method = "lm", se = FALSE) +
     theme_bw() +
     labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
          x = colnames(df)[1], y = colnames(df)[3])
   if (!(is.null(focus))) {
-    focus <- unlist(strsplit(focus, ","))
+    focus <- unlist(strsplit(gsub(" ", "",focus), ","))
     grafico <- grafico +
       scale_alpha_focus(focus) +
       scale_color_focus(focus)

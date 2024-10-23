@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-```{r, echo = FALSE, message = FALSE}
+```{r, echo=F, message=F, warning=F}
 library(dplyr)
 library(ggplot2)
 library(ggfocus)
@@ -23,7 +23,9 @@ y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
 db <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
                  ID = seq(1, length(x)))
 ```
+
 # API_Regressao_Linear
+
 ## Introdução
 `API_Regressao_Linear` permite, desde a interatividade do banco de dados à sua escolha, por meio de manipulações que realizam a adição, modificação e remoção de observações, até a utilização de regressão linear, que traz tanto as estimativas dos parâmetros quanto suas significâncias, além de predições para novos dados e gráficos de dispersão relacionados à reta de regressão ajustada e dos resíduos.
 
@@ -86,7 +88,7 @@ db[-c(2,4,6),]
 - `y`
 - `grupo`
 
-Se o interesse é alterar a observação de `ID = 6` para `x = 5, y = 10, grupo = C`.
+Se o interesse é alterar a observação de `ID = 6` para `x = 5`, `y = 10`, `grupo = C`.
 
 ```{r, echo = FALSE}
 db[6,] <- data.frame(x = 5, grupo = "C", y = 10, momento_registro = lubridate::now(),
@@ -108,7 +110,6 @@ y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
 db_grafico <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
                  ID = seq(1, length(x)))
 modelo_simulado <- lm(y ~ x + as.factor(grupo), data = db_grafico)
-
 ```
 `/fit/param`: Rota que fornece as estimativas dos parâmetros da regressão.
 
@@ -122,7 +123,6 @@ resultados <- list(
 )
 
 toJSON(resultados, pretty = TRUE)
-
 ```
 
 `/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros.
@@ -148,7 +148,6 @@ toJSON(resultados, pretty = TRUE)
 
 ```{r, echo = FALSE}
 toJSON(predict(modelo_simulado, data.frame(x = 20, grupo = "B")))
-
 ```
 Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`.
 
@@ -164,7 +163,6 @@ Considere que foi necessário adicionar mais observações para a ilustração d
 `/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente com a reta de regressão ajustada. Há um argumento opcional `focus` que destaca o grupo desejado. Caso não seja passado nenhum argumento, a saída é
 
 ```{r, echo = FALSE, warning = FALSE, message=FALSE}
-
 db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE) +
@@ -173,7 +171,7 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
          x = colnames(df)[1], y = colnames(df)[3])
 ```
 
-Supondo que queremos focar no grupo `A`.
+Supondo que queremos focar no grupo `A`. Além disso, mais de um grupo pode ser especificado utilizando a vírgula para separá-los.
 
 ```{r, echo = FALSE, warning = FALSE, message=FALSE}
 db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grupo)) +
