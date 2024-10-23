@@ -26,12 +26,12 @@ validar o comportamento das mesmas.
 Para exemplificação, considere o seguinte banco de dados simulado com
 cinco observações:
 
-    ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 23:53:07  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 23:53:07  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 23:53:07  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 23:53:07  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 23:53:07  5
+    ##          x grupo        y    momento_registro ID
+    ## 1 5.354514     B 6.433922 2024-10-23 15:50:28  1
+    ## 2 6.308610     A 8.873692 2024-10-23 15:50:28  2
+    ## 3 6.739688     B 9.642285 2024-10-23 15:50:28  3
+    ## 4 3.741000     C 7.266051 2024-10-23 15:50:28  4
+    ## 5 3.720005     A 3.661662 2024-10-23 15:50:28  5
 
 onde
 
@@ -53,42 +53,45 @@ requisição, recebendo os seguintes argumentos:
 - `y`
 
 Para exemplificar, considere a seguinte requisição
-`x = 10, grupo = A, y = 15`.
+`/data/add_row?x=5&grupo=A&y=10` (`x = 10`, `grupo = A`, `y = 10`).
 
-    ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 23:53:07  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 23:53:07  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 23:53:07  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 23:53:07  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 23:53:07  5
-    ## 6 5.0000000     A 10.000000 2024-10-22 23:53:07  6
+    ##          x grupo         y    momento_registro ID
+    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
+    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
+    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
+    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
+    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
+    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
 
 `/data/delete_row`: Rota que exclui observações de três maneiras
 diferentes, recebendo como argumento o `ID`. A primeira forma é feita
 excluindo uma única observação. Suponha que deseja-se excluir o
-`ID = 1`.
-
-    ##           x grupo         y    momento_registro ID
-    ## 2 5.7396884     C 13.826110 2024-10-22 23:53:07  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 23:53:07  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 23:53:07  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 23:53:07  5
-    ## 6 5.0000000     A 10.000000 2024-10-22 23:53:07  6
-
-Em certos casos, é preferível excluir uma sequência de observações, por
-meio da sequência `1:3`.
-
-    ##           x grupo         y    momento_registro ID
-    ## 4 0.7200049     C  3.457060 2024-10-22 23:53:07  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 23:53:07  5
-    ## 6 5.0000000     A 10.000000 2024-10-22 23:53:07  6
-
-Por fim, a terceira maneira é utilizando vetores como `2, 4, 6`.
+`ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 3.308610     B  5.973492 2024-10-22 23:53:07  1
-    ## 3 9.741000     A 11.482025 2024-10-22 23:53:07  3
-    ## 5 5.065424     C  5.894075 2024-10-22 23:53:07  5
+    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
+    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
+    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
+    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
+    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+
+Em certos casos, é preferível excluir uma sequência de observações, por
+meio da sequência `1:3`, cuja requisição é dada por
+`/data/delete_row?ID=1%3A4`.
+
+    ##          x grupo         y    momento_registro ID
+    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
+    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
+    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+
+Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a
+requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
+
+    ##          x grupo         y    momento_registro ID
+    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
+    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
+    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
+    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
 
 `/data/change_row`: Rota que modifica uma única observação por
 requisição. Para isso, é necessário especificar os argumentos:
@@ -98,21 +101,22 @@ requisição. Para isso, é necessário especificar os argumentos:
 - `y`
 - `grupo`
 
-Se o interesse é alterar a observação de `ID = 6` para `x = 5`,
-`y = 10`, `grupo = C`.
+Se o interesse é alterar a observação de `ID = 5` para `x = 5`,
+`grupo = C` e `y = 15`, tem-se que a requisição é
+`/data/change_row?ID=5&x=5&grupo=C&y=15`.
 
-    ##           x grupo         y    momento_registro ID
-    ## 1 3.3086101     B  5.973492 2024-10-22 23:53:07  1
-    ## 2 5.7396884     C 13.826110 2024-10-22 23:53:07  2
-    ## 3 9.7410001     A 11.482025 2024-10-22 23:53:07  3
-    ## 4 0.7200049     C  3.457060 2024-10-22 23:53:07  4
-    ## 5 5.0654238     C  5.894075 2024-10-22 23:53:07  5
-    ## 6 5.0000000     C 10.000000 2024-10-22 23:53:07  6
+    ##          x grupo         y    momento_registro ID
+    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
+    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
+    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
+    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
+    ## 5 5.000000     C 15.000000 2024-10-23 15:50:28  5
+    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
 
 ### Inferência
 
 `/fit/param`: Rota que fornece as estimativas dos parâmetros da
-regressão.
+regressão, e.g. `/fit/param`.
 
     ## {
     ##   "beta_0": [-3.1872],
@@ -123,12 +127,12 @@ regressão.
     ## }
 
 `/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse
-exemplo é exibido apenas os seis primeiros.
+exemplo é exibido apenas os seis primeiros, e.g. `/fit/residuals`.
 
     ## [-1.5131,-1.2313,-1.3551,-0.9376,-1.8813,-1.5385]
 
 `/fit/p_values`: Rota que informa sobre a significância estatística dos
-parâmetros
+parâmetros, e.g. `/fit/p_values`.
 
     ## {
     ##   "beta_0": [-3.1872],

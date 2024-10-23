@@ -16,7 +16,7 @@ ra <- 123
 set.seed(ra)
 b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
 bB <- 2; bC <- 3
-n <- 6
+n <- 5
 x <- rpois(n, lambda = 4) + runif(n, -3, 3)
 grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
 y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
@@ -49,7 +49,7 @@ para validar o comportamento das mesmas.
 Para exemplificação, considere o seguinte banco de dados simulado com cinco observações:
 
 ```{r, echo = FALSE}
-db[1:5,]
+db
 ```
 onde
 
@@ -68,7 +68,7 @@ onde
 - `grupo`
 - `y`
 
-Para exemplificar, considere a seguinte requisição `x = 10, grupo = A, y = 15`.
+Para exemplificar, considere a seguinte requisição `/data/add_row?x=5&grupo=A&y=10` (`x = 10`, `grupo = A`, `y = 10`).
 
 ```{r, echo = FALSE}
 db[6,] <- data.frame(x = 5, grupo = "A", y = 10, momento_registro = lubridate::now(),
@@ -77,23 +77,23 @@ db
 ```
 
 
-`/data/delete_row`: Rota que exclui observações de três maneiras diferentes, recebendo como argumento o `ID`. A primeira forma é feita excluindo uma única observação. Suponha que deseja-se excluir o `ID = 1`.
+`/data/delete_row`: Rota que exclui observações de três maneiras diferentes, recebendo como argumento o `ID`. A primeira forma é feita excluindo uma única observação. Suponha que deseja-se excluir o `ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
 ```{r, echo = FALSE}
 db[-1,]
 ```
 
-Em certos casos, é preferível excluir uma sequência de observações, por meio da sequência `1:3`.
+Em certos casos, é preferível excluir uma sequência de observações, por meio da sequência `1:3`, cuja requisição é dada por `/data/delete_row?ID=1%3A4`.
 
 ```{r, echo = FALSE}
 db[-c(1,2,3),]
 
 ```
 
-Por fim, a terceira maneira é utilizando vetores como `2, 4, 6`.
+Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
 
 ```{r, echo = FALSE}
-db[-c(2,4,6),]
+db[-c(2,4),]
 ```
 
 
@@ -104,11 +104,11 @@ db[-c(2,4,6),]
 - `y`
 - `grupo`
 
-Se o interesse é alterar a observação de `ID = 6` para `x = 5`, `y = 10`, `grupo = C`.
+Se o interesse é alterar a observação de `ID = 5` para `x = 5`, `grupo = C` e `y = 15`, tem-se que a requisição é `/data/change_row?ID=5&x=5&grupo=C&y=15`.
 
 ```{r, echo = FALSE}
-db[6,] <- data.frame(x = 5, grupo = "C", y = 10, momento_registro = lubridate::now(),
-ID = 6)
+db[5,] <- data.frame(x = 5, grupo = "C", y = 15, momento_registro = lubridate::now(),
+ID = 5)
 db
 ```
 
@@ -127,7 +127,8 @@ db_grafico <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubrida
                  ID = seq(1, length(x)))
 modelo_simulado <- lm(y ~ x + as.factor(grupo), data = db_grafico)
 ```
-`/fit/param`: Rota que fornece as estimativas dos parâmetros da regressão.
+
+`/fit/param`: Rota que fornece as estimativas dos parâmetros da regressão, e.g. `/fit/param`.
 
 ```{r, echo = FALSE}
 resultados <- list(
@@ -141,14 +142,13 @@ resultados <- list(
 toJSON(resultados, pretty = TRUE)
 ```
 
-`/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros.
+`/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros, e.g. `/fit/residuals`.
 
 ```{r, echo = FALSE}
 toJSON(head(modelo_simulado$residuals))
 ```
 
-
-`/fit/p_values`: Rota que informa sobre a significância estatística dos parâmetros
+`/fit/p_values`: Rota que informa sobre a significância estatística dos parâmetros, e.g. `/fit/p_values`.
 
 ```{r, echo = FALSE}
 resultado <- list(
@@ -160,12 +160,13 @@ resultado <- list(
 toJSON(resultados, pretty = TRUE)
 ```
 
-`/fit/pred`: Rota que realiza predições para novas observações. Especificando na requisição `x = 10` e `grupo = B`. 
+`/fit/pred`: Rota que realiza predições para novas observações. Especificando na requisição `x = 10` e `grupo = B`, e.g. `/fit/pred?x=10&grupo=B`. 
 
 ```{r, echo = FALSE}
 toJSON(predict(modelo_simulado, data.frame(x = 20, grupo = "B")))
 ```
-Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`.
+
+Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`, então a requisição é dada por `/fit/pred?x=10%2C20&grupo=B%2CA`.
 
 ```{r, echo = FALSE}
 toJSON(predict(modelo_simulado, data.frame(x = c(20, 10), grupo = c("B", "A"))))

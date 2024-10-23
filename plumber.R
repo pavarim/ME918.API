@@ -38,7 +38,7 @@ function(x, grupo, y) {
   readr::write_csv(nova_pessoa, "dados/dados_regressao.csv", append = TRUE)
   df <<- rbind(df, nova_pessoa)
   modelo <<- lm(y ~ x + as.factor(grupo), data = df)
-  return(df)
+  return(nova_pessoa)
 }
 
 
@@ -71,11 +71,11 @@ function(ID) {
 #* @param y Variável resposta
 #* @put /data/change_row
 function(ID, x, y, grupo) {
-  df[df$ID == as.numeric(ID), ] <<- data.frame(x = as.numeric(x), grupo = grupo, 
+  df[df$ID == as.numeric(ID),] <<- data.frame(x = as.numeric(x), grupo = grupo, 
   y = as.numeric(y), momento_registro = lubridate::now(), ID = as.numeric(ID))
   readr::write_csv(df, "dados/dados_regressao.csv")
   modelo <<- lm(y ~ x + as.factor(grupo), data = df)
-  return(df)
+  return(df[df$ID == as.numeric(ID),])
 }
 
 
