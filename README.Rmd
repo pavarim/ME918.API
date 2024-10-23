@@ -32,9 +32,18 @@ como parte das atividades realizadas na disciplina de ME918-2S-2024
 (Produto de Dados) do curso de Estatística da UNICAMP.
 
 ## Introdução
-`API_Regressao_Linear` permite, desde a interatividade do banco de dados à sua escolha, por meio de manipulações que realizam a adição, modificação e remoção de observações, até a utilização de regressão linear, que traz tanto as estimativas dos parâmetros quanto suas significâncias, além de predições para novos dados e gráficos de dispersão relacionados à reta de regressão ajustada e dos resíduos.
+`API_Regressao_Linear` é uma interface que permite ao usuário interagir com um 
+banco de dados à sua escolha, por meio de manipulações de adição,
+modificação e remoção de observações. Também possibilita ao usuário a 
+utilização de um modelo de regressão linear, que traz as estimativas dos 
+parâmetros do modelo, suas significâncias estatísticas, predições para novos dados e 
+gráficos de dispersão relacionados tanto à reta de regressão ajustada, 
+quanto aos resíduos.
 
-Ela foi criada e desenvolvida a partir do pacote `plumber` do R, que, através da especificação `Swagger`, define uma estrutura de API a partir de rotas, facilitando a implementação e a verificação por meio de testes para validar o comportamento da mesmas. 
+Ela foi criada e desenvolvida a partir do pacote `plumber` do R que,
+por meio da especificação `Swagger`, define uma estrutura de API a partir
+de rotas, facilitando a implementação e a verificação com testes
+para validar o comportamento das mesmas.
 
 ## Uso
 Para exemplificação, considere o seguinte banco de dados simulado com cinco observações:
