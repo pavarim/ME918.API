@@ -184,7 +184,7 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
     geom_smooth(method = "lm", se = FALSE) +
     theme_bw() +
     labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
-         x = colnames(df)[1], y = colnames(df)[3])
+         x = colnames(db_grafico)[1], y = colnames(db_grafico)[3])
 ```
 
 Supondo que queremos focar no grupo `A`. Além disso, mais de um grupo pode ser especificado utilizando a vírgula para separá-los.
@@ -195,7 +195,7 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grup
     geom_smooth(method = "lm", se = FALSE) +
     theme_bw() +
     labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
-         x = colnames(df)[1], y = colnames(df)[3]) +
+         x = colnames(db_grafico)[1], y = colnames(db_grafico)[3]) +
       scale_alpha_focus("A") +
       scale_color_focus("A")
 
