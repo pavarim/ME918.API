@@ -174,7 +174,7 @@ toJSON(predict(modelo_simulado, data.frame(x = c(20, 10), grupo = c("B", "A"))))
 
 ### Gráficos
 
-Considere que foi necessário adicionar mais observações para a ilustração da regressão nos gráficos. 
+Considere que foi necessário adicionar mais observações para a análise gráfica da regressão. 
 
 `/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente com a reta de regressão ajustada. Há um argumento opcional `focus` que destaca o grupo desejado. Caso não seja passado nenhum argumento, a saída é
 
