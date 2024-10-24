@@ -65,7 +65,7 @@ onde
 - `grupo`
 - `y`
 
-Para exemplificar, considere a seguinte requisição `/data/add_row?x=5&grupo=A&y=10` (`x = 10`, `grupo = A`, `y = 10`).
+Para exemplificar, considere a seguinte requisição `/data/add_row?x=5&grupo=A&y=10` (`x = 5`, `grupo = A`, `y = 10`).
 
 ```{r, echo = FALSE}
 db[6,] <- data.frame(x = 5, grupo = "A", y = 10, momento_registro = lubridate::now(),
@@ -73,7 +73,7 @@ ID = 6)
 db
 ```
 
-Além disso, mais duas rotas foram adicionadas para garantir melhor manutenção dos dados, já que estar limitado apenas à inserção de novas variáveis pode gerar problemas, como a impossibolidade de correção para a adição de uma informação errada.
+Além disso, mais duas rotas foram adicionadas para garantir melhor manutenção dos dados, já que estar limitado apenas à inserção de novas variáveis pode gerar problemas, como a impossibilidade de correção para a adição de uma informação errada.
 
 `/data/delete_row`: Rota que exclui observações de três maneiras diferentes, recebendo como argumento o `ID`. A primeira forma é feita excluindo uma única observação. Suponha que deseja-se excluir o `ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
@@ -84,15 +84,14 @@ db[-1,]
 Em certos casos, é preferível excluir uma sequência de observações, isso pode ser feito por meio da sequência `1:3` (isto é, as observações de 1 à 3 estão sendo excluídas), cuja requisição é dada por `/data/delete_row?ID=1%3A4`.
 
 ```{r, echo = FALSE}
-db[-c(1,2,3),]
+db[-c(1:3),]
 ```
 
 Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
 
 ```{r, echo = FALSE}
-db[-c(2,4),]
+db[-c(1,3,5),]
 ```
-
 
 `/data/change_row`: Rota que modifica uma única observação por requisição. Para isso, é necessário especificar os argumentos:
 

@@ -74,7 +74,7 @@ function(ID, x, y, grupo) {
 #* @get /plot/lm
 function(focus = NULL) {
   grafico <- df %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grupo)) +
-    geom_point(alpha=1) +
+    geom_point(alpha = 1) +
     geom_smooth(method = "lm", se = FALSE) +
     theme_bw() +
     labs(title = "Gráfico de dispersão com a reta de regressão ajustada por categoria",
