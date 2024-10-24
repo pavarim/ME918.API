@@ -142,7 +142,7 @@ resultados <- list(
 toJSON(resultados, pretty = TRUE)
 ```
 
-`/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros, e.g. `/fit/residuals`.
+`/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse exemplo é exibido apenas os seis primeiros, com requisição dada por `/fit/residuals`.
 
 ```{r, echo = FALSE}
 toJSON(head(modelo_simulado$residuals))

@@ -129,7 +129,21 @@ function() {
 
 
 # Parte 3 - Eletiva
-#* Gera um gráfico dos resíduos do modelo de regressão ajustado
+#* Gera um qqplot do modelo
+#* @tag Gráficos
+#* @serializer png
+#* @get /plot/residuals_qq
+function() {
+  grafico <- df %>% ggplot(aes(sample = modelo$residuals)) +
+    geom_qq() +
+    theme_bw() +
+    labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
+         x = "Observação", y ="Resíduos")
+  print(grafico) 
+}
+
+# Parte 3 - Eletiva
+#* Gera um grafico de resíduo contra valores preditos
 #* @tag Gráficos
 #* @serializer png
 #* @get /plot/residuals
