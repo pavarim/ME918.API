@@ -134,12 +134,12 @@ function() {
 #* @serializer png
 #* @get /plot/residuals_qq
 function() {
-  grafico <- df %>% ggplot(aes(sample = modelo$residuals)) +
-    geom_qq() +
-    theme_bw() +
-    labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
-         x = "Observação", y ="Resíduos")
-  print(grafico) 
+  grafico <- df %>% ggplot(aes(sample = .resid)) +
+    stat_qq(col="blue", size=2, alpha=0.6) +
+    stat_qq_line(col="red", size=1) +
+    labs(title = "QQ-Plot", x = "Quantis Teóricos", y = "Quantis Amostrais") +
+    theme_bw()
+  print(grafico)
 }
 
 # Parte 3 - Eletiva
@@ -148,12 +148,11 @@ function() {
 #* @serializer png
 #* @get /plot/residuals
 function() {
-  grafico <- df %>% ggplot(aes(sample = modelo$residuals)) +
-    geom_qq() +
-    theme_bw() +
-    labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
-         x = "Observação", y ="Resíduos")
-  print(grafico) 
+  grafico <- df %>% ggplot(aes(x = .fitted, y = .resid)) +
+    geom_point(col = "blue") +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+    labs(title = "Resíduos x Valores preditos", x = "Valor Predito", y = "Resíduo") +
+    theme_bw()
 }
 
 
