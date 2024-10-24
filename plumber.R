@@ -129,6 +129,20 @@ function() {
 
 
 # Parte 3 - Eletiva
+#* Gera um grafico de resíduo contra valores preditos
+#* @tag Gráficos
+#* @serializer png
+#* @get /plot/residuals
+function() {
+  grafico <- df %>% ggplot(aes(x = .fitted, y = .resid)) +
+    geom_point(col = "blue") +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+    labs(title = "Resíduos x Valores preditos", x = "Valor Predito", y = "Resíduo") +
+    theme_bw()
+}
+
+
+# Parte 3 - Eletiva
 #* Gera um qqplot do modelo
 #* @tag Gráficos
 #* @serializer png
@@ -140,19 +154,6 @@ function() {
     labs(title = "QQ-Plot", x = "Quantis Teóricos", y = "Quantis Amostrais") +
     theme_bw()
   print(grafico)
-}
-
-# Parte 3 - Eletiva
-#* Gera um grafico de resíduo contra valores preditos
-#* @tag Gráficos
-#* @serializer png
-#* @get /plot/residuals
-function() {
-  grafico <- df %>% ggplot(aes(x = .fitted, y = .resid)) +
-    geom_point(col = "blue") +
-    geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-    labs(title = "Resíduos x Valores preditos", x = "Valor Predito", y = "Resíduo") +
-    theme_bw()
 }
 
 

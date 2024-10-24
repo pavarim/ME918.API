@@ -201,13 +201,23 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grup
       scale_color_focus("A")
 ```
 
-`/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos da regressão. A sua chamada é dada por `/plot/residuals`.
+`/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos da regressão contra os valores preditos. A sua chamada é dada por `/plot/residuals`.
 
 ```{r, echo = FALSE}
-modelo_simulado %>% ggplot(aes(y = .resid, x = .fitted)) +
-  geom_point() +
-  theme_bw() +
-  labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
-       x = "Observação", y ="Resíduos")
+db_grafico %>% ggplot(aes(x = fitted(modelo_simulado), y = residuals(modelo_simulado))) +
+  geom_point(col = "blue") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(title = "Resíduos x Valores preditos", x = "Valor Predito", y = "Resíduo") +
+  theme_bw()
+```
+
+`/plot/residuals_qq`: Rota que realiza a requisição do gráfico QQ-plot. Sua chamada é dada por `/plot/residuals_qq`.
+
+```{r}
+db_grafico %>% ggplot(aes(sample = residuals(modelo_simulado))) +
+  stat_qq(col="blue", size=2, alpha=0.6) +
+  stat_qq_line(col="red", size=1) +
+  labs(title = "QQ-Plot", x = "Quantis Teóricos", y = "Quantis Amostrais") +
+  theme_bw()
 ```
 

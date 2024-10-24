@@ -27,11 +27,11 @@ Para exemplificação, considere o seguinte banco de dados simulado com
 cinco observações:
 
     ##          x grupo        y    momento_registro ID
-    ## 1 5.354514     B 6.433922 2024-10-23 21:37:11  1
-    ## 2 6.308610     A 8.873692 2024-10-23 21:37:11  2
-    ## 3 6.739688     B 9.642285 2024-10-23 21:37:11  3
-    ## 4 3.741000     C 7.266051 2024-10-23 21:37:11  4
-    ## 5 3.720005     A 3.661662 2024-10-23 21:37:11  5
+    ## 1 5.354514     B 6.433922 2024-10-23 21:53:37  1
+    ## 2 6.308610     A 8.873692 2024-10-23 21:53:37  2
+    ## 3 6.739688     B 9.642285 2024-10-23 21:53:37  3
+    ## 4 3.741000     C 7.266051 2024-10-23 21:53:37  4
+    ## 5 3.720005     A 3.661662 2024-10-23 21:53:37  5
 
 onde
 
@@ -56,12 +56,12 @@ Para exemplificar, considere a seguinte requisição
 `/data/add_row?x=5&grupo=A&y=10` (`x = 10`, `grupo = A`, `y = 10`).
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
-    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
-    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
-    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
-    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
-    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:53:37  1
+    ## 2 6.308610     A  8.873692 2024-10-23 21:53:37  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:53:37  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:53:37  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:53:37  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:53:37  6
 
 Além disso, mais duas rotas foram adicionadas para garantir melhor
 manutenção dos dados, já que estar limitado apenas à inserção de novas
@@ -74,11 +74,11 @@ excluindo uma única observação. Suponha que deseja-se excluir o
 `ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
     ##          x grupo         y    momento_registro ID
-    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
-    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
-    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
-    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
-    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+    ## 2 6.308610     A  8.873692 2024-10-23 21:53:37  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:53:37  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:53:37  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:53:37  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:53:37  6
 
 Em certos casos, é preferível excluir uma sequência de observações, isso
 pode ser feito por meio da sequência `1:3` (isto é, as observações de 1
@@ -86,18 +86,18 @@ pode ser feito por meio da sequência `1:3` (isto é, as observações de 1
 `/data/delete_row?ID=1%3A4`.
 
     ##          x grupo         y    momento_registro ID
-    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
-    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
-    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+    ## 4 3.741000     C  7.266051 2024-10-23 21:53:37  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:53:37  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:53:37  6
 
 Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a
 requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
-    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
-    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
-    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:53:37  1
+    ## 3 6.739688     B  9.642285 2024-10-23 21:53:37  3
+    ## 5 3.720005     A  3.661662 2024-10-23 21:53:37  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:53:37  6
 
 `/data/change_row`: Rota que modifica uma única observação por
 requisição. Para isso, é necessário especificar os argumentos:
@@ -112,12 +112,12 @@ Se o interesse é alterar a observação de `ID = 5` para `x = 5`,
 `/data/change_row?ID=5&x=5&grupo=C&y=15`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
-    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
-    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
-    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
-    ## 5 5.000000     C 15.000000 2024-10-23 21:37:11  5
-    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:53:37  1
+    ## 2 6.308610     A  8.873692 2024-10-23 21:53:37  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:53:37  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:53:37  4
+    ## 5 5.000000     C 15.000000 2024-10-23 21:53:37  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:53:37  6
 
 ### Inferência
 
@@ -136,7 +136,8 @@ regressão, e.g. `/fit/param`.
     ## }
 
 `/fit/residuals`: Rota que retorna todos os resíduos da regressão. Nesse
-exemplo é exibido apenas os seis primeiros, e.g. `/fit/residuals`.
+exemplo é exibido apenas os seis primeiros, com requisição dada por
+`/fit/residuals`.
 
     ## [-1.5131,-1.2313,-1.3551,-0.9376,-1.8813,-1.5385]
 
@@ -182,6 +183,26 @@ para separá-los.
 ![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 `/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos
-da regressão. A sua chamada é dada por `/plot/residuals`.
+da regressão contra os valores preditos. A sua chamada é dada por
+`/plot/residuals`.
 
 ![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+`/plot/residuals_qq`: Rota que realiza a requisição do gráfico QQ-plot.
+Sua chamada é dada por `/plot/residuals_qq`.
+
+``` r
+db_grafico %>% ggplot(aes(sample = residuals(modelo_simulado))) +
+  stat_qq(col="blue", size=2, alpha=0.6) +
+  stat_qq_line(col="red", size=1) +
+  labs(title = "QQ-Plot", x = "Quantis Teóricos", y = "Quantis Amostrais") +
+  theme_bw()
+```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
+
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
