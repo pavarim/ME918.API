@@ -9,18 +9,6 @@ library(ggfocus)
 #* @apiTitle API Regressão Linear
 
 # Variável global
-# ra <- 185416
-# set.seed(ra)
-# b0 <- runif(1, -2, 2); b1 <- runif(1, -2, 2)
-# bB <- 2; bC <- 3
-# n <- 25
-# x <- rpois(n, lambda = 4) + runif(n, -3, 3)
-# grupo <- sample(LETTERS[1:3], size = n, replace = TRUE)
-# y <- rnorm(n, mean = b0 + b1*x + bB*(grupo=="B") + bC*(grupo=="C"), sd = 2)
-# df <- data.frame(x = x, grupo = grupo, y = y, momento_registro = lubridate::now(),
-#                  ID = seq(1, length(x)))
-# readr::write_csv(df, file = "dados/dados_regressao.csv")
-
 df <- read.csv("dados/dados_regressao.csv")  # Recuperando dados anteriores
 modelo <- lm(y ~ x + as.factor(grupo), data = df)  # Ajustando modelo
 
@@ -134,11 +122,12 @@ function() {
 #* @serializer png
 #* @get /plot/residuals
 function() {
-  grafico <- df %>% ggplot(aes(x = .fitted, y = .resid)) +
+  grafico <- modelo %>% ggplot(aes(x = .fitted, y = .resid)) +
     geom_point(col = "blue") +
     geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
     labs(title = "Resíduos x Valores preditos", x = "Valor Predito", y = "Resíduo") +
     theme_bw()
+  print(grafico)
 }
 
 
@@ -148,7 +137,7 @@ function() {
 #* @serializer png
 #* @get /plot/residuals_qq
 function() {
-  grafico <- df %>% ggplot(aes(sample = .resid)) +
+  grafico <- modelo %>% ggplot(aes(sample = .resid)) +
     stat_qq(col="blue", size=2, alpha=0.6) +
     stat_qq_line(col="red", size=1) +
     labs(title = "QQ-Plot", x = "Quantis Teóricos", y = "Quantis Amostrais") +
