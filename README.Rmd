@@ -40,10 +40,7 @@ parâmetros do modelo, suas significâncias estatísticas, predições para novo
 gráficos de dispersão relacionados tanto à reta de regressão ajustada, 
 quanto aos resíduos.
 
-Ela foi criada e desenvolvida a partir do pacote `plumber` do R que,
-por meio da especificação `Swagger`, define uma estrutura de API a partir
-de rotas, facilitando a implementação e a verificação com testes
-para validar o comportamento das mesmas.
+Ela foi criada e desenvolvida a partir do pacote `plumber` do R (e testada através do `Swagger`) que, define uma estrutura de API a partir de rotas, facilitando a implementação e a verificação com testes para validar o comportamento das mesmas.
 
 ## Uso
 Para exemplificação, considere o seguinte banco de dados simulado com cinco observações:
@@ -76,6 +73,7 @@ ID = 6)
 db
 ```
 
+Além disso, mais duas rotas foram adicionadas para garantir melhor manutenção dos dados, já que estar limitado apenas à inserção de novas variáveis pode gerar problemas, como a impossibolidade de correção para a adição de uma informação errada.
 
 `/data/delete_row`: Rota que exclui observações de três maneiras diferentes, recebendo como argumento o `ID`. A primeira forma é feita excluindo uma única observação. Suponha que deseja-se excluir o `ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
@@ -83,11 +81,10 @@ db
 db[-1,]
 ```
 
-Em certos casos, é preferível excluir uma sequência de observações, por meio da sequência `1:3`, cuja requisição é dada por `/data/delete_row?ID=1%3A4`.
+Em certos casos, é preferível excluir uma sequência de observações, isso pode ser feito por meio da sequência `1:3` (isto é, as observações de 1 à 3 estão sendo excluídas), cuja requisição é dada por `/data/delete_row?ID=1%3A4`.
 
 ```{r, echo = FALSE}
 db[-c(1,2,3),]
-
 ```
 
 Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
@@ -112,7 +109,10 @@ ID = 5)
 db
 ```
 
+
 ### Inferência
+Considere que foi necessário adicionar mais observações no banco de dados para a análise inferêncial. 
+
 ```{r, echo = FALSE}
 # Banco simulado para regressão
 ra <- 1234
@@ -166,7 +166,7 @@ toJSON(resultados, pretty = TRUE)
 toJSON(predict(modelo_simulado, data.frame(x = 20, grupo = "B")))
 ```
 
-Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`, então a requisição é dada por `/fit/pred?x=10%2C20&grupo=B%2CA`.
+Além disso, essa rota pode retornar mais de uma predição, caso a requisição seja `/fit/pred?x=10%2C20&grupo=B%2CA`, isto é, `x = 10, 20` e `grupo = B, A`.
 
 ```{r, echo = FALSE}
 toJSON(predict(modelo_simulado, data.frame(x = c(20, 10), grupo = c("B", "A"))))
@@ -175,9 +175,9 @@ toJSON(predict(modelo_simulado, data.frame(x = c(20, 10), grupo = c("B", "A"))))
 
 ### Gráficos
 
-Considere que foi necessário adicionar mais observações para a análise gráfica da regressão. 
+Considere que foi necessário adicionar mais observações ao banco de dados para a análise gráfica da regressão. 
 
-`/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente com a reta de regressão ajustada. Há um argumento opcional `focus` que destaca o grupo desejado. Caso não seja passado nenhum argumento, a saída é
+`/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente com a reta de regressão ajustada. Há um argumento opcional `focus` que destaca o grupo desejado. Caso não seja passado nenhum argumento, a chamada é `/plot/lm`.
 
 ```{r, echo = FALSE, warning = FALSE, message=FALSE}
 db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
@@ -188,7 +188,7 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo)) +
          x = colnames(db_grafico)[1], y = colnames(db_grafico)[3])
 ```
 
-Supondo que queremos focar no grupo `A`. Além disso, mais de um grupo pode ser especificado utilizando a vírgula para separá-los.
+Supondo que queremos focar no grupo `A` a chamada é `/plot/lm?focus=A`. Além disso, mais de um grupo pode ser especificado utilizando a vírgula para separá-los.
 
 ```{r, echo = FALSE, warning = FALSE, message=FALSE}
 db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grupo)) +
@@ -199,16 +199,15 @@ db_grafico %>% ggplot(aes(x = x, y = y, col = grupo, alpha = grupo, group = grup
          x = colnames(db_grafico)[1], y = colnames(db_grafico)[3]) +
       scale_alpha_focus("A") +
       scale_color_focus("A")
-
 ```
 
-`/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos da regressão.
+`/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos da regressão. A sua chamada é dada por `/plot/residuals`.
 
 ```{r, echo = FALSE}
- db_grafico %>% ggplot(aes(sample = modelo_simulado$residuals)) +
-    geom_qq() +
-    theme_bw() +
-    labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
-         x = "Observação", y ="Resíduos")
+modelo_simulado %>% ggplot(aes(y = .resid, x = .fitted)) +
+  geom_point() +
+  theme_bw() +
+  labs(title = "Gráfico dos resíduos do modelo de regressão ajustado",
+       x = "Observação", y ="Resíduos")
 ```
 

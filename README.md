@@ -16,9 +16,9 @@ modelo, suas significâncias estatísticas, predições para novos dados e
 gráficos de dispersão relacionados tanto à reta de regressão ajustada,
 quanto aos resíduos.
 
-Ela foi criada e desenvolvida a partir do pacote `plumber` do R que, por
-meio da especificação `Swagger`, define uma estrutura de API a partir de
-rotas, facilitando a implementação e a verificação com testes para
+Ela foi criada e desenvolvida a partir do pacote `plumber` do R (e
+testada através do `Swagger`) que, define uma estrutura de API a partir
+de rotas, facilitando a implementação e a verificação com testes para
 validar o comportamento das mesmas.
 
 ## Uso
@@ -27,11 +27,11 @@ Para exemplificação, considere o seguinte banco de dados simulado com
 cinco observações:
 
     ##          x grupo        y    momento_registro ID
-    ## 1 5.354514     B 6.433922 2024-10-23 15:50:28  1
-    ## 2 6.308610     A 8.873692 2024-10-23 15:50:28  2
-    ## 3 6.739688     B 9.642285 2024-10-23 15:50:28  3
-    ## 4 3.741000     C 7.266051 2024-10-23 15:50:28  4
-    ## 5 3.720005     A 3.661662 2024-10-23 15:50:28  5
+    ## 1 5.354514     B 6.433922 2024-10-23 21:37:11  1
+    ## 2 6.308610     A 8.873692 2024-10-23 21:37:11  2
+    ## 3 6.739688     B 9.642285 2024-10-23 21:37:11  3
+    ## 4 3.741000     C 7.266051 2024-10-23 21:37:11  4
+    ## 5 3.720005     A 3.661662 2024-10-23 21:37:11  5
 
 onde
 
@@ -56,12 +56,17 @@ Para exemplificar, considere a seguinte requisição
 `/data/add_row?x=5&grupo=A&y=10` (`x = 10`, `grupo = A`, `y = 10`).
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
-    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
-    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
-    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
-    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
-    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
+    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
+
+Além disso, mais duas rotas foram adicionadas para garantir melhor
+manutenção dos dados, já que estar limitado apenas à inserção de novas
+variáveis pode gerar problemas, como a impossibolidade de correção para
+a adição de uma informação errada.
 
 `/data/delete_row`: Rota que exclui observações de três maneiras
 diferentes, recebendo como argumento o `ID`. A primeira forma é feita
@@ -69,29 +74,30 @@ excluindo uma única observação. Suponha que deseja-se excluir o
 `ID = 1`, então, a requisição é `/data/delete_row?ID=1`.
 
     ##          x grupo         y    momento_registro ID
-    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
-    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
-    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
-    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
-    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
 
-Em certos casos, é preferível excluir uma sequência de observações, por
-meio da sequência `1:3`, cuja requisição é dada por
+Em certos casos, é preferível excluir uma sequência de observações, isso
+pode ser feito por meio da sequência `1:3` (isto é, as observações de 1
+à 3 estão sendo excluídas), cuja requisição é dada por
 `/data/delete_row?ID=1%3A4`.
 
     ##          x grupo         y    momento_registro ID
-    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
-    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
-    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
+    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
 
 Por fim, a terceira maneira é utilizando vetores como `1, 3, 5`, com a
 requisição dada por `/data/delete_row?ID=1%2C3%2C5`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
-    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
-    ## 5 3.720005     A  3.661662 2024-10-23 15:50:28  5
-    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
+    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
+    ## 5 3.720005     A  3.661662 2024-10-23 21:37:11  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
 
 `/data/change_row`: Rota que modifica uma única observação por
 requisição. Para isso, é necessário especificar os argumentos:
@@ -106,14 +112,17 @@ Se o interesse é alterar a observação de `ID = 5` para `x = 5`,
 `/data/change_row?ID=5&x=5&grupo=C&y=15`.
 
     ##          x grupo         y    momento_registro ID
-    ## 1 5.354514     B  6.433922 2024-10-23 15:50:28  1
-    ## 2 6.308610     A  8.873692 2024-10-23 15:50:28  2
-    ## 3 6.739688     B  9.642285 2024-10-23 15:50:28  3
-    ## 4 3.741000     C  7.266051 2024-10-23 15:50:28  4
-    ## 5 5.000000     C 15.000000 2024-10-23 15:50:28  5
-    ## 6 5.000000     A 10.000000 2024-10-23 15:50:28  6
+    ## 1 5.354514     B  6.433922 2024-10-23 21:37:11  1
+    ## 2 6.308610     A  8.873692 2024-10-23 21:37:11  2
+    ## 3 6.739688     B  9.642285 2024-10-23 21:37:11  3
+    ## 4 3.741000     C  7.266051 2024-10-23 21:37:11  4
+    ## 5 5.000000     C 15.000000 2024-10-23 21:37:11  5
+    ## 6 5.000000     A 10.000000 2024-10-23 21:37:11  6
 
 ### Inferência
+
+Considere que foi necessário adicionar mais observações no banco de
+dados para a análise inferêncial.
 
 `/fit/param`: Rota que fornece as estimativas dos parâmetros da
 regressão, e.g. `/fit/param`.
@@ -143,33 +152,36 @@ parâmetros, e.g. `/fit/p_values`.
     ## }
 
 `/fit/pred`: Rota que realiza predições para novas observações.
-Especificando na requisição `x = 10` e `grupo = B`.
+Especificando na requisição `x = 10` e `grupo = B`,
+e.g. `/fit/pred?x=10&grupo=B`.
 
     ## [11.874]
 
 Além disso, essa rota pode retornar mais de uma predição, caso a
-requisição seja, por exemplo, `x = 10, 20` e `grupo = B, A`.
+requisição seja `/fit/pred?x=10%2C20&grupo=B%2CA`, isto é, `x = 10, 20`
+e `grupo = B, A`.
 
     ## [11.874,3.0613]
 
 ### Gráficos
 
-Considere que foi necessário adicionar mais observações para a análise
-gráfica da regressão.
+Considere que foi necessário adicionar mais observações ao banco de
+dados para a análise gráfica da regressão.
 
 `/plot/lm`: Rota responsável por gerar o gráfico de dispersão juntamente
 com a reta de regressão ajustada. Há um argumento opcional `focus` que
 destaca o grupo desejado. Caso não seja passado nenhum argumento, a
-saída é
+chamada é `/plot/lm`.
 
 ![](README_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-Supondo que queremos focar no grupo `A`. Além disso, mais de um grupo
-pode ser especificado utilizando a vírgula para separá-los.
+Supondo que queremos focar no grupo `A` a chamada é `/plot/lm?focus=A`.
+Além disso, mais de um grupo pode ser especificado utilizando a vírgula
+para separá-los.
 
 ![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 `/plot/residuals`: Rota que realiza a requisição do gráfico de resíduos
-da regressão.
+da regressão. A sua chamada é dada por `/plot/residuals`.
 
 ![](README_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
